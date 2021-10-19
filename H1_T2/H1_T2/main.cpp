@@ -10,7 +10,7 @@ majority_pair<T> haveMajority(std::vector<T>& data);
 
 int main()
 {
-  std::vector<int> data = { 1,2 };
+  std::vector<int> data = { 1,2,1};
 
   if (haveMajority(data).first == true)
   {
@@ -44,7 +44,7 @@ majority_pair<T> haveMajority(std::vector<T>& data)
       if (data_2[i] == m1.second.second) ++(m1.second.first);
     }
 
-    if (m1.second.first > (data.size() + 1) / 2) return m1;
+    if (m1.second.first > data.size() / 2) return m1;
   }
 
   auto m2 = haveMajority<T>(data_2);
