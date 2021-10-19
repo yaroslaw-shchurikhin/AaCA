@@ -10,7 +10,7 @@ majority_pair<T> haveMajority(std::vector<T>& data);
 
 int main()
 {
-  std::vector<int> data = {1, 2, 1};
+  std::vector<int> data = {1, 3, 5, 5, 5};
 
   if (haveMajority(data).first == true)
   {
