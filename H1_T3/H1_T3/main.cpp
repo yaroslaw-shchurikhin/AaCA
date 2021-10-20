@@ -6,7 +6,7 @@ using int_vector = std::vector<int>;
 using index_pair = std::pair<unsigned, unsigned>;
 
 index_pair split(int_vector& a, int p);
-int select(int_vector& a, size_t random);
+int select(int_vector& a, size_t k);
 
 int main()
 {
@@ -53,13 +53,12 @@ int main()
       throw std::invalid_argument("Incorrect elem of array!");
     }
 
-    int_vector b(a);
-    index_pair indexes = split(b, elem);
+    index_pair indexes = split(a, elem);
 
     std::cout << "\nArray: ";
-    std::copy(b.begin(), b.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::copy(a.begin(), a.end(), std::ostream_iterator<int>(std::cout, " "));
     std::cout << "\nIndexes of " << elem << " is " << indexes.first << ' ' << indexes.second;
-    std::cout << "\nMedian: " << select(a, size/2) << std::endl;
+    std::cout << "\nMedian: " << select(a, (size - 1)/2) << std::endl;
 
   }
   catch (const std::invalid_argument& ex)
