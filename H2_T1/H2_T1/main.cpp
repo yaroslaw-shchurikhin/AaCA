@@ -19,7 +19,7 @@ void printGraph(graph& g);
 //Main methods
 void dfs1(graph& or_graph, int v);
 void dfs2(graph& trans_graph, int v);
-graph getSCC(graph& g);
+std::pair<graph, std::vector<int>> getSCC(graph& g);
 graph getMetaGraph(graph& g);
 
 int main()
@@ -29,7 +29,6 @@ int main()
 
 	graph orient_graph(size);
 	visited.resize(size);
-	order.resize(size);
 
 	for (int i = 0; i < size; ++i)
 	{
@@ -87,8 +86,6 @@ int checkSCC(graph& scc, int v)
 
 void createEdge(graph& g, int src, int dest)
 {
-	for (auto i : g[src]) if (i == dest) return;
-
 	g[src].push_back(dest);
 }
 
@@ -130,10 +127,11 @@ void dfs2(graph& trans_graph, int v)
 	order.push_back(v);
 }
 
-graph getSCC(graph& g)
+std::pair<graph, std::vector<int>> getSCC(graph& g)
 {
 	graph transponsed = reverseGraph(g);
 	graph scc;
+	std::vector<int> sccNumbers(g.size());
 
 	visited.assign(visited.size(), false);
 	for (int i = 0; i < g.size(); ++i)
@@ -151,32 +149,42 @@ graph getSCC(graph& g)
 		{
 			dfs2(transponsed, order[i]);
 
-			std::cout << "SCC " << count_SCC++ << ": ";
-			std::copy(component.begin(), component.end(), 
-				std::ostream_iterator<int>(std::cout, " "));
+			std::cout << "SCC " << count_SCC << ": ";
+			std::for_each(component.begin(), component.end(), 
+				[&](int x) {
+					std::cout << x << ' ';
+					sccNumbers[x] = count_SCC;
+				});
+
 			std::cout << '\n';
 
 			scc.push_back(component);
 			component.clear();
+			++count_SCC;
 		}
 	}
-
-	return scc;
+	return std::make_pair<>(scc, sccNumbers);
 }
 
 graph getMetaGraph(graph& g)
 {
-	graph scc = getSCC(g);
-	graph metaGraph(scc.size());
+	auto scc_info = getSCC(g);
+	graph metaGraph(scc_info.first.size());
 
-	for (int i = 0; i < scc.size(); ++i)
+	std::vector<bool> scc_visited(scc_info.first.size());
+	scc_visited.assign(scc_visited.size(), false);
+
+	for (int i = 0; i < scc_info.first.size(); ++i)
 	{
-		for (int j : scc[i])
+		for (int j : scc_info.first[i])
 		{
 			for (int k : g[j])
 			{
-				int sccNumber = checkSCC(scc, k);
-				if (sccNumber != i) createEdge(metaGraph, i, sccNumber);
+				if (scc_info.second[k] != i && !scc_visited[scc_info.second[k]])
+				{
+					createEdge(metaGraph, i, scc_info.second[k]);
+					scc_visited[scc_info.second[k]] = true;
+				}
 			}
 		}
 	}
