@@ -28,7 +28,9 @@ int main()
 	std::cin >> size;
 
 	graph orient_graph(size);
+
 	visited.resize(size);
+	order.resize(size);
 
 	for (int i = 0; i < size; ++i)
 	{
@@ -105,8 +107,8 @@ void printGraph(graph& g)
 
 void dfs1(graph& or_graph, int v)
 {
-
 	visited[v] = true;
+
 	for (int i : or_graph[v])
 	{
 		if (!visited[i]) dfs1(or_graph, i);
@@ -124,6 +126,7 @@ void dfs2(graph& trans_graph, int v)
 	{
 		if (!visited[i]) dfs2(trans_graph, i);
 	}
+
 	order.push_back(v);
 }
 
@@ -186,6 +189,12 @@ graph getMetaGraph(graph& g)
 					scc_visited[scc_info.second[k]] = true;
 				}
 			}
+		}
+
+		//scc_visited.assign(scc_visited.size(), false);
+		for (auto n : metaGraph[i])
+		{
+			scc_visited[n] = false;
 		}
 	}
 

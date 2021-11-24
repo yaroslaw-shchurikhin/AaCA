@@ -12,12 +12,12 @@ majority_pair<T> haveMajority(Container <T> & data);
 
 int main()
 {
-  std::vector<int> data = {1, 3, 5, 5, 5};
-  std::list<char> data2 = { 'a', 'c', 'a', 'a' };
+  std::vector<int> data = { 1, 3, 5, 5, 5 };
+  std::list<char> data2 = { 'a', 'c', 'b', 'a', 'b', 'b', 'b'};
 
-  if (haveMajority(data2).first == true)
+  if (haveMajority(data).first == true)
   {
-    std::cout << "The majority of this array: " << haveMajority(data2).second.second;
+    std::cout << "The majority of this array: " << haveMajority(data).second.second;
   }
   else std::cout << "There isn't majority in this array!";
 

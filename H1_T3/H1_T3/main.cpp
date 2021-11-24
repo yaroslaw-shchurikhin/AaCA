@@ -18,7 +18,7 @@ int main()
     std::cin >> size;
     if (!std::cin.good())
     {
-      throw std::invalid_argument("Incorrect array size!");
+        throw std::invalid_argument("Incorrect array size!");
     }
 
     int_vector a(size);
@@ -31,17 +31,17 @@ int main()
 
       if (std::cin.good())
       {
-        a[i] = temp;
+          a[i] = temp;
       }
       else if (std::cin.fail() && !std::cin.eof())
       {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), ' ');
-        --i;
+          std::cin.clear();
+          std::cin.ignore(std::numeric_limits<std::streamsize>::max(), ' ');
+          --i;
       }
       else if (std::cin.bad())
       {
-        throw std::invalid_argument("Critical error of input stream!");
+          throw std::invalid_argument("Critical error of input stream!");
       }
     }
 
@@ -50,7 +50,7 @@ int main()
     std::cin >> elem;
     if (!std::cin.good())
     {
-      throw std::invalid_argument("Incorrect elem of array!");
+        throw std::invalid_argument("Incorrect elem of array!");
     }
 
     index_pair indexes = split(a, elem);
@@ -58,7 +58,7 @@ int main()
     std::cout << "\nArray: ";
     std::copy(a.begin(), a.end(), std::ostream_iterator<int>(std::cout, " "));
     std::cout << "\nIndexes of " << elem << " is " << indexes.first << ' ' << indexes.second;
-    std::cout << "\nMedian: " << select(a, (size - 1)/2) << std::endl;
+    std::cout << "\nMedian: " << select(a, (size - 1) / 2) << std::endl;
 
   }
   catch (const std::invalid_argument& ex)
@@ -72,49 +72,60 @@ int main()
 
 int select(int_vector& a, size_t k)
 {
-  if (a.size() == 1u) return a.at(0);
+    if (a.size() == 1u) return a.at(0);
 
-  srand(time(NULL));
-  size_t random = static_cast<size_t>(rand() % a.size());
+    srand(time(NULL));
+    size_t random = static_cast<size_t>(rand() % a.size());
 
-  int p = a.at(random);
+    int p = a.at(random);
 
-  index_pair p_index = split(a, p);
+    std::swap(a[random], a[a.size() - 1]);
+    index_pair p_index = split(a, p);
 
-  if (k < p_index.first)
-  {
-    int_vector left(a.begin(), a.begin() + p_index.first);
-    return select(left, k);
-  }
-  else if (k <= p_index.second) return p;
-  else
-  {
-    int_vector right(a.begin() + p_index.second + 1, a.end());
-    return select(right, k - p_index.second - 1);
-  }
+    if (k < p_index.first)
+    {
+        int_vector left(a.begin(), a.begin() + p_index.first);
+        return select(left, k);
+    }
+    else if (k <= p_index.second) return p;
+    else
+    {
+        int_vector right(a.begin() + p_index.second + 1, a.end());
+        return select(right, k - p_index.second - 1);
+    }
 }
 
-index_pair split(int_vector& a, int p)
+index_pair split(int_vector& a, int p) //Hoare algorithm
 {
   auto size = a.size();
-  for (auto i = 0u; i < size; ++i)
-  {
 
-    if (a.at(i) < p)
+  int i = 0;
+  int j = size-1;
+
+  while (i <= j)
+  {
+    while (a[i] < p) ++i;
+    while (a[j] > p) --j;
+    if (i <= j)
     {
-      a.insert(a.begin(), std::remove_reference_t<int>(a.at(i)));
-      a.erase(a.begin() + i + 1);
-    }
-    else if (a.at(i) > p)
-    {
-      a.push_back(std::remove_reference_t<int>(a.at(i)));
-      a.erase(a.begin() + i);
+      std::swap(a[i++], a[j--]);
     }
   }
 
-  auto iters = std::equal_range(a.begin(), a.end(), p);
+  auto iters = std::equal_range(a.begin(), a.end(), p); //логарифмическая сложность для итераторов произвольного доступа
+  int index_begin_p = std::distance(a.begin(), iters.first);
+  int count = 0;
+  for (auto i = 0; i < index_begin_p; ++i)
+  {
+    if (a[i] == p)
+    {
+      std::swap(a[i], a[index_begin_p - 1 - count]);
+      --index_begin_p;
+    }
+    ++count;
+  }
 
   return std::make_pair(
-    std::distance(a.begin(), iters.first),
-    std::distance(a.begin(), iters.second) - 1);
+      std::distance(a.begin(), iters.first),
+      std::distance(a.begin(), iters.second) - 1);
 }
