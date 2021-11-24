@@ -38,6 +38,7 @@ majority_pair<T> haveMajority(Container <T, std::allocator<T>>& data) //Works wi
 
   auto iter_mid = data.begin();
   for (auto i = 0u; i < data.size() / 2; ++i) iter_mid++;
+
   Container <T> data_1(data.begin(), iter_mid);
   Container <T> data_2(iter_mid, data.end());
 
