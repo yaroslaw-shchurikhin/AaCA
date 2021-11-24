@@ -101,6 +101,7 @@ void printGraph(graph& g)
 		{
 			std::cout << j << ' ';
 		}
+
 		std::cout << "  " << -1 << '\n';
 	}
 }
